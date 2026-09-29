@@ -42,9 +42,9 @@ pub(crate) mod chains;
 /// at the input hooks declare a payload-prefix byte count folded into the
 /// node-wide payload peek at `build()`; the base methods declare 0. The
 /// declaration is recorded but not yet wired (Phase 3,
-/// `filter_subsystem_design.md`): the Ingress chain runs on the resident
+/// `filter_subsystem_design.md`): both input chains run on the resident
 /// header prefix, so a peeking filter reads a not-yet-resident payload as
-/// absent, and the Originate hooks run with the full bundle resident.
+/// absent.
 #[must_use = "a filter pack registers nothing until it is handed to BpaBuilder::add_filters"]
 pub struct FilterPack {
     name: Arc<str>,
@@ -135,8 +135,8 @@ impl FilterPack {
     /// `peek`-byte payload prefix.
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
-    /// `filter_subsystem_design.md`): the Originate hooks run with the full
-    /// bundle resident.
+    /// `filter_subsystem_design.md`): the Originate chain runs on the
+    /// resident header prefix.
     pub fn originate_verifier_with_peek(
         &mut self,
         label: &str,
@@ -201,8 +201,8 @@ impl FilterPack {
     /// `peek`-byte payload prefix.
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
-    /// `filter_subsystem_design.md`): the Originate hooks run with the full
-    /// bundle resident.
+    /// `filter_subsystem_design.md`): the Originate chain runs on the
+    /// resident header prefix.
     pub fn originate_classifier_with_peek(
         &mut self,
         label: &str,
