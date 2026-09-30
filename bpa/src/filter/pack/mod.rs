@@ -43,7 +43,8 @@ pub(crate) mod chains;
 /// node-wide payload peek at `build()`; the base methods declare 0. The
 /// declaration is recorded but not yet wired (Phase 3,
 /// `filter_subsystem_design.md`): both input chains run on the resident
-/// header prefix, so a peeking filter reads a not-yet-resident payload as
+/// prefix — the whole bundle when it was already resident at the header
+/// pass, else the headers alone — so a peeking filter may find the payload
 /// absent.
 #[must_use = "a filter pack registers nothing until it is handed to BpaBuilder::add_filters"]
 pub struct FilterPack {
@@ -110,7 +111,7 @@ impl FilterPack {
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
     /// `filter_subsystem_design.md`): the Ingress chain runs on the resident
-    /// header prefix.
+    /// prefix, which may stop short of the payload.
     pub fn ingress_verifier_with_peek(
         &mut self,
         label: &str,
@@ -136,7 +137,7 @@ impl FilterPack {
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
     /// `filter_subsystem_design.md`): the Originate chain runs on the
-    /// resident header prefix.
+    /// resident prefix, which may stop short of the payload.
     pub fn originate_verifier_with_peek(
         &mut self,
         label: &str,
@@ -175,7 +176,7 @@ impl FilterPack {
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
     /// `filter_subsystem_design.md`): the Ingress chain runs on the resident
-    /// header prefix.
+    /// prefix, which may stop short of the payload.
     pub fn ingress_classifier_with_peek(
         &mut self,
         label: &str,
@@ -202,7 +203,7 @@ impl FilterPack {
     ///
     /// Recorded but inert until the peek is wired (Phase 3,
     /// `filter_subsystem_design.md`): the Originate chain runs on the
-    /// resident header prefix.
+    /// resident prefix, which may stop short of the payload.
     pub fn originate_classifier_with_peek(
         &mut self,
         label: &str,
