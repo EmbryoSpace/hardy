@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Removed
 - **BREAKING:** the free `bpsec::block_data()` function — `bpsec::DecryptingReader::block_data` is the same contract (typed errors carrying the cause; owned decrypted plaintext) plus outcome memoisation and an explicit `Ok(None)` for non-resident extents. A one-shot caller migrates to `DecryptingReader::new(..).into_block_data(n)`, which, like the removed function, returns the decrypted plaintext without an extra copy.
+- **BREAKING:** `checks::verify_payload` is removed. Callers holding deferred payload-BIB op-sets settle them incrementally via `checks::begin_payload_verification` + `bib::Verifier` — no resident payload buffer is required, which is the point.
 
 ### Changed
 - **BREAKING:** the `unrecognised` field of `block::Flags`, `bundle::Flags`, and `rfc9173::ScopeFlags` is a plain `u64`, zero when no unrecognised bits are set (was `Option<u64>`, where `None` and `Some(0)` meant the same). Migration: `None` becomes `0` and `Some(bits)` becomes `bits`, so `if let Some(bits) = flags.unrecognised` becomes `if flags.unrecognised != 0`. The serde shape of `block::Flags` and `bundle::Flags` is unchanged for every value a parse or builder produces — the field is omitted when zero — except that an explicit `null` no longer deserializes.
